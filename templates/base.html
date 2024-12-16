@@ -1,0 +1,257 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="title" content="Devnoms" />
+    <meta name="description" content="A powerful chat application for seamless communication." />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Devnoms" />
+    <meta name="description" content="A powerful chat application for seamless communication." />
+    <meta property="og:image" content="https://filesstatic.netlify.app/Chatapp/img/logo_750x750.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="Devnoms" />
+    <meta property="twitter:image" content="https://filesstatic.netlify.app/Chatapp/img/logo_750x750.png" />
+    <meta name="description" content="A powerful chat application for seamless communication." />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'chat/favicon_io/apple-touch-icon.png' %}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'chat/favicon_io/favicon-32x32.png' %}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'chat/favicon_io/favicon-16x16.png' %}" />
+    <link rel="manifest" href="{% static 'chat/favicon_io/site.webmanifest' %}" />
+    <title>
+      {% block title %}
+        Devnoms
+      {% endblock %}
+    </title>
+    {% block style %}
+
+    {% endblock %}
+    <style>
+      /* Popup alert styles */
+      #install-prompt-popup {
+        position: fixed;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 350px;
+        background-color: #1f1f1f;
+        color: #fefefe;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        font-family: Arial, sans-serif;
+        z-index: 1000;
+        text-align: center;
+        animation: slideDown 0.3s ease-in-out;
+      }
+      #install-prompt-popup h3 {
+        margin: 0;
+        font-size: 20px;
+        color: white;
+        font-weight: bold;
+      }
+      #install-prompt-popup p {
+        margin: 15px 0;
+        font-size: 14px;
+        color: rgb(255, 255, 255);
+      }
+      #install-prompt-popup-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      #install-app-btn {
+        background-color: white;
+        color: #9339f5;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      #install-app-btn:hover {
+        background-color: #e5ccff;
+      }
+      #dismiss-prompt-btn {
+        background-color: #4b4b4b;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      #dismiss-prompt-btn:hover {
+        background-color: #2f2f2f;
+      }
+      #close-icon {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 20px;
+        color: #f0e4ff;
+        cursor: pointer;
+      }
+      #close-icon:hover {
+        color: #e5ccff;
+      }
+      /* Animation for the popup */
+      @keyframes slideDown {
+        from {
+          transform: translate(-50%, -100%);
+        }
+        to {
+          transform: translate(-50%, 0);
+        }
+      }
+      
+      /* Overlay styles */
+      #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 9999;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+      }
+      
+      .centered-loader {
+        text-align: center;
+      }
+      
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #fff;
+        border-top: 5px solid #9339f5;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .hidden {
+        display: none;
+      }
+      
+      #loader .spinner {
+        width: 20px;
+        height: 20px;
+        border: 3px solid #fff;
+        border-top: 3px solid #9339f5;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="overlay" class="hidden">
+      <div class="centered-loader">
+        <div class="spinner"></div>
+      </div>
+    </div>
+    {% block content %}
+
+    {% endblock %}
+
+    <script>
+      let deferredPrompt
+      
+      // Check if the popup has been shown in the current session
+      const installPromptShown = sessionStorage.getItem('installPromptShown')
+      
+      window.addEventListener('beforeinstallprompt', (e) => {
+        // Show the prompt only if it hasn't been shown in this session
+        if (installPromptShown) return
+      
+        // Prevent the default mini-infobar from appearing on mobile
+        e.preventDefault()
+        deferredPrompt = e
+      
+        // Create a custom popup alert
+        const popup = document.createElement('div')
+        popup.id = 'install-prompt-popup'
+      
+        // Add content to the popup
+        popup.innerHTML = `
+                <span id="close-icon">&times;</span>
+                <h3>Install Devnoms</h3>
+                <p>Get a seamless experience and offline access by installing this app.</p>
+                <div id="install-prompt-popup-buttons">
+                  <button id="install-app-btn">Install</button>
+                  <button id="dismiss-prompt-btn">Dismiss</button>
+                </div>
+              `
+      
+        document.body.appendChild(popup)
+      
+        // Handle the install button click
+        document.getElementById('install-app-btn').addEventListener('click', () => {
+          deferredPrompt.prompt()
+          deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+              console.log('App installed')
+            } else {
+              console.log('App not installed')
+            }
+            deferredPrompt = null
+            // Mark that the prompt has been shown in this session
+            sessionStorage.setItem('installPromptShown', 'true')
+            document.body.removeChild(popup)
+          })
+        })
+      
+        // Handle the dismiss button click
+        document.getElementById('dismiss-prompt-btn').addEventListener('click', () => {
+          // Mark that the prompt has been shown in this session
+          sessionStorage.setItem('installPromptShown', 'true')
+          document.body.removeChild(popup)
+        })
+      
+        // Handle the close icon click
+        document.getElementById('close-icon').addEventListener('click', () => {
+          // Mark that the prompt has been shown in this session
+          sessionStorage.setItem('installPromptShown', 'true')
+          document.body.removeChild(popup)
+        })
+      })
+      
+      function overlayLoader(event) {
+        event.preventDefault() // Prevent immediate redirection
+      
+        // Display the overlay and loader
+        const overlay = document.getElementById('overlay')
+        overlay.style.display = 'flex'
+      
+        // Redirect to the signup page after showing the loader
+        const signupButton = event.target
+        window.location.href = signupButton.href
+      }
+      
+      window.addEventListener('pageshow', () => {
+        const overlay = document.getElementById('overlay')
+        overlay.style.display = 'none'
+      })
+    </script>
+  </body>
+</html>

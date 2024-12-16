@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Signup | Devnoms
+{% endblock %}
+
+{% block style %}
+  <style>
+    * {
+      margin: 0%;
+      padding: 0%;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #131518;
+      font-family: century gothic;
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: auto;
+      position: relative;
+      top: 30px;
+      height: 90vh;
+      background-color: #282a2d;
+      border: 2px solid rgb(255, 132, 0);
+      text-align: center;
+      border-radius: 8px;
+      box-shadow: 4px 4px 10px -4px #9339f5;
+    }
+    @media screen and (max-width: 550px) {
+      .container {
+        top: 0px;
+        max-width: 550px;
+        height: 100vh;
+      }
+    }
+    
+    #title {
+      color: #fff;
+      font-size: 48px;
+      margin-top: 40px;
+    }
+    
+    form {
+      width: 80%;
+      margin: 0px auto;
+    }
+    
+    #login-fields {
+      width: 100%;
+    }
+    
+    #login-fields input {
+      margin-bottom: 20px;
+      padding: 10px 0px;
+      width: 100%;
+      text-align: center;
+      color: #fff;
+      font-size: 20px;
+      background: #131518;
+      border-radius: 8px;
+      outline: none;
+      border: none;
+    }
+    ::placeholder {
+      color: #7a7a7a;
+      opacity: 1;
+    }
+    
+    #password-relative {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    
+    #password-relative a {
+      transition-duration: 0.2s;
+      color: #9339f5;
+      text-decoration: none;
+      font-size: 20px;
+      font-weight: 400;
+      outline: none;
+    }
+    
+    #password-relative a:hover,
+    #password-relative a:focus {
+      transition-duration: 0.2s;
+      color: #a57df5;
+    }
+    
+    button {
+      margin-bottom: 6px;
+      width: 60%;
+      color: #fff;
+      font-size: 20px;
+      background: #9339f5;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      cursor: pointer;
+      padding: 16px 0px;
+    }
+    
+    button:hover {
+      transition-duration: 0.2s;
+      background: #6421eb;
+    }
+    .message {
+      width: 80%;
+      margin: 0px auto;
+      color: #f53939;
+      font-size: 18px;
+    }
+    
+    .message:hover {
+      transition-duration: 0.2s;
+      color: #f57d7d;
+    }
+    
+    @media screen and (max-width: 550px) {
+      form {
+        width: 90%;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <br />
+    <br />
+    <div id="login-header">
+      <div id="title">Signup</div>
+    </div>
+    <br />
+    <br />
+
+    <form action method="post" onsubmit="return validateForm()">
+      {% csrf_token %}
+      <div id="login-fields">
+        <input type="text" autocapitalize="none" placeholder="Username" name="username" id="username" value="{{ userdata.username }}" required autocapitalize="none" />
+
+        <input type="email" placeholder="Email" name="email" id="email" value="{{ userdata.useremail }}" required />
+
+        <input type="password" placeholder="Password" id="password1" name="password1" required />
+
+        <input type="password" placeholder="Confirm Password" id="password2" name="password2" required />
+      </div>
+      <div id="password-relative">
+        <div>
+          <a href="{% url 'login' %}" onclick="overlayLoader(event)">Login</a>
+        </div>
+      </div>
+      <button type="submit" id="signup-button">
+        <span id="btn-text">Signup</span>
+        <span id="loader" class="hidden"></span>
+      </button>
+    </form>
+    <br />
+    <p class="message">{{ error_message }}</p>
+  </div>
+  <script>
+    function validateForm() {
+      var usernameInput = document.getElementById('username')
+      var username = document.getElementById('username').value
+      var email = document.getElementById('email').value
+      var password1 = document.getElementById('password1').value
+      var password2 = document.getElementById('password2').value
+    
+      if (/\s/.test(username)) {
+        alert('Username cannot contain spaces.')
+        return false
+      }
+      if (username === '' || email === '' || password1 === '' || password2 === '') {
+        document.querySelector('.message').innerHTML = 'Please fill in all required fields.'
+        return false
+      }
+      if (password1 !== password2) {
+        document.querySelector('.message').innerHTML = 'Your password and confirmation password do not match.'
+        return false
+      }
+      const signupButton = document.getElementById('signup-button')
+      const btnText = document.getElementById('btn-text')
+      const loader = document.getElementById('loader')
+    
+      // Disable button and show loader
+      signupButton.disabled = true
+      btnText.style.display = 'none'
+      loader.classList.remove('hidden')
+      loader.innerHTML = '<div class="spinner"></div>' // Add spinner content
+      return true // Allow form submission if there are no spaces
+    }
+    window.addEventListener('pageshow', () => {
+      const signupButton = document.getElementById('signup-button')
+      const btnText = document.getElementById('btn-text')
+      const loader = document.getElementById('loader')
+    
+      // Reset the button and loader states
+      signupButton.disabled = false
+      btnText.style.display = 'inline'
+      loader.classList.add('hidden')
+    })
+    // Prevent form resubmission on refresh
+    if (window.history.replaceState) {
+      window.history.replaceState(null, null, window.location.href)
+    }
+  </script>
+{% endblock %}

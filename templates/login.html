@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Login | Devnoms
+{% endblock %}
+
+{% block style %}
+  <style>
+    * {
+      margin: 0%;
+      padding: 0%;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #131518;
+      font-family: century gothic;
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: auto;
+      position: relative;
+      top: 30px;
+      height: 90vh;
+      background-color: #282a2d;
+      border: 2px solid rgb(255, 132, 0);
+      text-align: center;
+      border-radius: 8px;
+      box-shadow: 4px 4px 10px -4px #9339f5;
+    }
+    @media screen and (max-width: 550px) {
+      .container {
+        top: 0px;
+        max-width: 550px;
+        height: 100vh;
+      }
+    }
+    
+    #title {
+      color: #fff;
+      font-size: 48px;
+      margin-top: 40px;
+    }
+    
+    form {
+      width: 80%;
+      margin: 0px auto;
+    }
+    
+    #login-fields {
+      width: 100%;
+    }
+    
+    #login-fields input {
+      margin-bottom: 20px;
+      padding: 15px 15px;
+      width: 100%; /* text-align: center; */
+      color: #fff;
+      font-size: 16px;
+      background: #131518;
+      border-radius: 8px;
+      outline: none;
+      border: none;
+    }
+    ::placeholder {
+      color: #7a7a7a;
+      opacity: 1;
+    }
+    
+    #password-relative {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    
+    #password-relative a {
+      transition-duration: 0.2s;
+      color: #9339f5;
+      text-decoration: none;
+      font-size: 20px;
+      font-weight: 400;
+      outline: none;
+    }
+    
+    #password-relative a:hover,
+    #password-relative a:focus {
+      transition-duration: 0.2s;
+      color: #a57df5;
+    }
+    
+    button {
+      margin-bottom: 6px;
+      width: 60%;
+      color: #fff;
+      font-size: 20px;
+      background: #9339f5;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      cursor: pointer;
+      padding: 16px 0px;
+    }
+    
+    button:hover {
+      transition-duration: 0.2s;
+      background: #6421eb;
+    }
+    .message {
+      width: 80%;
+      margin: 0px auto;
+      color: #f53939;
+      font-size: 18px;
+    }
+    
+    .message:hover {
+      transition-duration: 0.2s;
+      color: #f57d7d;
+    }
+    
+    @media screen and (max-width: 550px) {
+      form {
+        width: 90%;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <br />
+    <br />
+    <br />
+    <br />
+    <div id="login-header">
+      <div id="title">Login</div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <form method="post" onsubmit="return handleLogin(event)">
+      {% csrf_token %}
+      <div id="login-fields">
+        <input type="text" placeholder="Email or Username" name="email_or_username" id="email_or_username" required value="{{ email }}" autocapitalize="none"/>
+        <input type="password" placeholder="Password" id="password" name="pass" required />
+      </div>
+      <div id="password-relative">
+        <div>
+          <a href="{% url 'signup' %}" id="signup-btn" onclick="overlayLoader(event)">Signup</a>
+        </div>
+      </div>
+      <button type="submit" id="login-btn">
+        <span id="btn-text">Log In</span>
+        <span id="loader" class="hidden"></span>
+      </button>
+    </form>
+    <br />
+    {% if error_message %}
+      <p class="message">{{ error_message }}</p>
+    {% endif %}
+  </div>
+  <script>
+    if (window.history.replaceState) {
+      window.history.replaceState(null, null, window.location.href)
+    }
+    function handleLogin(event) {
+      const loginButton = document.getElementById('login-btn')
+      const btnText = document.getElementById('btn-text')
+      const loader = document.getElementById('loader')
+    
+      // Disable button and show loader
+      loginButton.disabled = true
+      btnText.style.display = 'none'
+      loader.classList.remove('hidden')
+      loader.innerHTML = '<div class="spinner"></div>' // Add spinner content
+    
+      // Allow the form to submit
+      return true
+    }
+    window.addEventListener('pageshow', () => {
+      const loginButton = document.getElementById('login-btn')
+      const btnText = document.getElementById('btn-text')
+      const loader = document.getElementById('loader')
+
+      // Reset the button and loader states
+      loginButton.disabled = false
+      btnText.style.display = 'inline'
+      loader.classList.add('hidden')
+    })
+  </script>
+{% endblock %}

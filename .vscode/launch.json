@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Run Daphne Server",
+        "type": "debugpy",
+        "request": "launch",
+        "program": "${workspaceFolder}/venv/Scripts/daphne.exe",  // Adjusted path for Windows
+        "args": [
+          "devnoms.asgi:application"
+        ],
+        "console": "integratedTerminal"
+      }
+    ]
+  }
+  
