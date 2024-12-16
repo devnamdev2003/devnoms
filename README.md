@@ -1,10 +1,11 @@
+# [Devnoms Chat App](https://devnoms.onrender.com)
+
 <div style="text-align: center;">
   <a href="https://devnoms.onrender.com">
     <img src="https://filesstatic.netlify.app/Chatapp/img/logo_750x750.png" alt="Devnoms Logo" style="width: 300px;">
   </a>
 </div>
 
-# [Devnoms Chat App](https://devnoms.onrender.com)
 
 🚀 Welcome to **Devnoms Chat App**, a modern, feature-rich real-time chat platform! Designed to empower seamless communication, **Devnoms Chat App** allows users to connect with friends, manage profiles, and engage in real-time conversations with an intuitive interface and cutting-edge features.
 
